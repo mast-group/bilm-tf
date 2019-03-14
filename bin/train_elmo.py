@@ -12,11 +12,17 @@ def main(args):
     vocab = load_vocab(args.vocab_file, 50)
 
     # define the options
-    batch_size = 128  # batch size for each GPU
-    n_gpus = 3
+    batch_size = args.batch_size  # batch size for each GPU
+    n_gpus = 2
 
     # number of tokens in training data (this for 1B Word Benchmark)
-    n_train_tokens = 768648884
+    # n_train_tokens = 768648884
+    # Calculates the number of tokens in training data
+    n_train_tokens = 0
+    with open(args.train_prefix, 'r') as f:
+        for line in f:
+            line = line.rstrip('\n')
+            n_train_tokens += len(line.split())
 
     options = {
      'bidirectional': True,
@@ -34,11 +40,11 @@ def main(args):
       'n_characters': 261,
       'n_highway': 2},
     
-     'dropout': 0.1,
+     'dropout': args.dropout,
     
      'lstm': {
       'cell_clip': 3,
-      'dim': 4096,
+      'dim': args.dim,
       'n_layers': 2,
       'proj_clip': 3,
       'projection_dim': 512,
@@ -55,12 +61,15 @@ def main(args):
     }
 
     prefix = args.train_prefix
-    data = BidirectionalLMDataset(prefix, vocab, test=False,
-                                      shuffle_on_load=True)
+    valid_prefix = args.valid_prefix
+    data = BidirectionalLMDataset(prefix, vocab, test=False, shuffle_on_load=True)
+    print('Will load validation')
+    validation_data = BidirectionalLMDataset(valid_prefix, vocab, test=True, shuffle_on_load=False)
+    print('Loaded validation')
 
     tf_save_dir = args.save_dir
     tf_log_dir = args.save_dir
-    train(options, data, n_gpus, tf_save_dir, tf_log_dir)
+    train(options, data, n_gpus, tf_save_dir, tf_log_dir, validation_data, None)
 
 
 if __name__ == '__main__':
@@ -68,6 +77,10 @@ if __name__ == '__main__':
     parser.add_argument('--save_dir', help='Location of checkpoint files')
     parser.add_argument('--vocab_file', help='Vocabulary file')
     parser.add_argument('--train_prefix', help='Prefix for train files')
+    parser.add_argument('--valid_prefix', help='Prefix for validation files')
+    parser.add_argument('--batch_size', help='Batch size for training', type=int, default=128)
+    parser.add_argument('--dim', help='Dimensions for embeddings', type=int, default=4096)
+    parser.add_argument('--dropout', help='Dropout propability', type=float, default=0.1)
 
     args = parser.parse_args()
     main(args)
