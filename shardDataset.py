@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import argparse
+import os
 
 
 def main(args):
@@ -8,7 +9,7 @@ def main(args):
     sentences = 0
     fname = ''
     with open(args.dataset_file, 'r') as f:
-        fname = f.name
+        fname = os.path.basename(f.name)
         for line in f:
             sentences += 1
     
