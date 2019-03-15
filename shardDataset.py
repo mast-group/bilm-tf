@@ -16,11 +16,11 @@ def main(args):
     
     # Delete the shard files if they exist
     for shard_id in range(args.shards):
-        f = open(args.save_dir + '/' + 'fname.shard%d' % shard_id, 'w')
+        f = open(args.save_dir + '/%s.shard%d' % (fname, shard_id), 'w')
         f.close()
 
     shard_id = 0
-    fw = open(args.save_dir + '/' + 'fname.shard%d' % shard_id, 'w+')
+    fw = open(args.save_dir + '/%s.shard%d' % (fname, shard_id), 'w+')
     with open(args.dataset_file, 'r') as f:
         for s, sentence in enumerate(f):
             fw.write(sentence)
