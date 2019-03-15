@@ -1,6 +1,6 @@
 
 import argparse
-
+import glob
 import numpy as np
 
 from bilm.training import train, load_options_latest_checkpoint, load_vocab
@@ -19,10 +19,12 @@ def main(args):
     # n_train_tokens = 768648884
     # Calculates the number of tokens in training data
     n_train_tokens = 0
-    with open(args.train_prefix, 'r') as f:
-        for line in f:
-            line = line.rstrip('\n')
-            n_train_tokens += len(line.split())
+    train_files = glob.glob(args.train_prefix)
+    for train_file in train_files:
+        with open(train_file, 'r') as f:
+            for line in f:
+                line = line.rstrip('\n')
+                n_train_tokens += len(line.split())
 
     options = {
      'bidirectional': True,
