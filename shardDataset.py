@@ -30,6 +30,7 @@ def main(args):
             if saved % sentences_per_shard == 0:
                 fw.close()
                 shard_id += 1
+                print(shard_id)
                 fw = open(args.save_dir + '/' + '%s.shard%d' % (fname, shard_id), 'w')
     fw.close()   
     
