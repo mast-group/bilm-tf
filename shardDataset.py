@@ -10,25 +10,27 @@ def main(args):
     fname = ''
     with open(args.dataset_file, 'r') as f:
         fname = os.path.basename(f.name)
-        for line in f:
+        for sentence in f:
             sentences += 1
     
     sentences_per_shard = sentences / args.shards
     
-    # Delete the shard files if they exist
-    for shard_id in range(args.shards):
-        f = open(args.save_dir + '/%s.shard%d' % (fname, shard_id), 'w')
-        f.close()
+    # # Delete the shard files if they exist
+    # for shard_id in range(args.shards):
+    #     f = open(args.save_dir + '/%s.shard%d' % (fname, shard_id), 'w')
+    #     f.close()
 
     shard_id = 0
-    fw = open(args.save_dir + '/%s.shard%d' % (fname, shard_id), 'w+')
+    saved = 0
+    fw = open(args.save_dir + '/%s.shard%d' % (fname, shard_id), 'w')
     with open(args.dataset_file, 'r') as f:
-        for s, sentence in enumerate(f):
+        for sentence in f:
             fw.write(sentence)
-            if s % sentences_per_shard == 0:
+            saved += 1
+            if saved % sentences_per_shard == 0:
                 fw.close()
                 shard_id += 1
-                fw = open(args.save_dir + '/' + 'fname.shard%d' % shard_id, 'w+')
+                fw = open(args.save_dir + '/' + 'fname.shard%d' % shard_id, 'w')
     fw.close()   
     
 
