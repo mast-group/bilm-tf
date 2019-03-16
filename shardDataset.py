@@ -13,7 +13,7 @@ def main(args):
         for sentence in f:
             sentences += 1
     
-    sentences_per_shard = sentences / args.shards
+    sentences_per_shard = sentences // args.shards
     
     # # Delete the shard files if they exist
     # for shard_id in range(args.shards):
