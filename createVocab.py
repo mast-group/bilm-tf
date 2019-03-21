@@ -1,4 +1,6 @@
 import argparse
+import glob
+
 from collections import defaultdict
 from operator import itemgetter
 
@@ -7,12 +9,14 @@ parser.add_argument("-r", "--read", dest="filename", help="path to the file from
 parser.add_argument("-v", "--vocab", dest="vocabulary", help="path to the file in which to save the vocab", metavar="VOC_FILE")
 args = parser.parse_args()
 
-with open(args.filename, 'r') as f:
-	counts = defaultdict(int)
-	for line in f:
-		tokens = line.split()
-		for token in tokens:
-			counts[token] += 1
+files = glob.glob(args.filename)
+for file in files:
+	with open(file, 'r') as f:
+		counts = defaultdict(int)
+		for line in f:
+			tokens = line.split()
+			for token in tokens:
+				counts[token] += 1
 
 if '<s>' in counts: del counts['<s>']
 if '</s>' in counts: del counts['</s>']
