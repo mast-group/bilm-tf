@@ -10,9 +10,9 @@ parser.add_argument("-v", "--vocab", dest="vocabulary", help="path to the file i
 args = parser.parse_args()
 
 files = glob.glob(args.filename)
+counts = defaultdict(int)
 for file in files:
 	with open(file, 'r') as f:
-		counts = defaultdict(int)
 		for line in f:
 			tokens = line.split()
 			for token in tokens:
