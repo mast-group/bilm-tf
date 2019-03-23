@@ -13,7 +13,7 @@ data_dir = '/disk/scratch/mpatsis/eddie/data/phog/js/'
 vocab_file = os.path.join(data_dir, 'vocab')
 model_dir = '/disk/scratch/mpatsis/eddie/models/phog/js/elmo/1024/'
 options_file = os.path.join(model_dir, 'options.json')
-weight_file = os.path.join(model_dir, 'lm_weights.hdf5')
+weight_file = os.path.join(model_dir, 'weights/weights.hdf5')
 
 # Create a Batcher to map text to character ids.
 batcher = Batcher(vocab_file, 50)
