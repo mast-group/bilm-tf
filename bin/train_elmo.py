@@ -13,6 +13,7 @@ def main(args):
 
     # define the options
     batch_size = args.batch_size  # batch size for each GPU
+    unroll_steps = args.unroll_steps
     n_gpus = 2
 
     # number of tokens in training data (this for 1B Word Benchmark)
@@ -58,7 +59,7 @@ def main(args):
      'n_train_tokens': n_train_tokens,
      'batch_size': batch_size,
      'n_tokens_vocab': vocab.size,
-     'unroll_steps': 20,
+     'unroll_steps': unroll_steps,
      'n_negative_samples_batch': 8192,
     }
 
@@ -82,6 +83,7 @@ if __name__ == '__main__':
     parser.add_argument('--valid_prefix', help='Prefix for validation files')
     parser.add_argument('--batch_size', help='Batch size for training', type=int, default=128)
     parser.add_argument('--dim', help='Dimensions for embeddings', type=int, default=4096)
+    parser.add_argument('--steps', help='Unroll steps for bilstm', type=int, default=200)
     parser.add_argument('--dropout', help='Dropout propability', type=float, default=0.1)
 
     args = parser.parse_args()
