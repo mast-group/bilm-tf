@@ -12,7 +12,7 @@ from bilm import Batcher, BidirectionalLanguageModel, weight_layers
 data_dir = '/disk/scratch/mpatsis/eddie/data/phog/js/'
 vocab_file = os.path.join(data_dir, 'vocab')
 model_dir = '/disk/scratch/mpatsis/eddie/models/phog/js/elmo/1024/'
-options_file = os.path.join(model_dir, 'options.json')
+options_file = os.path.join(model_dir, 'query_options.json')
 weight_file = os.path.join(model_dir, 'weights/weights.hdf5')
 
 # Create a Batcher to map text to character ids.
