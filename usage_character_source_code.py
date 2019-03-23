@@ -68,6 +68,7 @@ with tf.Session() as sess:
         [elmo_code_input['weighted_op']],
         feed_dict={code_character_ids: code_ids}
     )
+    print(elmo_code_input_)
     # elmo_question_input_ = sess.run(
     #     [elmo_question_input['weighted_op']],
     #     feed_dict={question_character_ids: question_ids}
