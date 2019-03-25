@@ -15,6 +15,10 @@ def query(code):
     Arguments:
         code {list/string} -- [a list of strings (mulitple queries) or a string (single query) of code tokens]
     """
+    try:
+        basestring
+    except NameError:
+        basestring = str
     if isinstance(code, list):
         for code_sequence in code:
             if not isinstance(code_sequence, basestring): raise ValueError
