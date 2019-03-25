@@ -41,14 +41,14 @@ def query(code):
         eprint("Pickled code sequences: ", data)
         sock.sendall(data)
         sock.sendall(END)
-        
+
         received_data = ''.encode()
         received = sock.recv(MAX_PACKET_SIZE)
         while not received[-len(END): ] == END:
             received_data += received
             received = sock.recv(MAX_PACKET_SIZE)
         received_data += received[: -len(END)]
-        eprint('received pickled ELMo embeddings: "%s"' % received_data)
+        # eprint('received pickled ELMo embeddings: "%s"' % received_data)
         elmo_representations = pickle.loads(received_data)
         eprint('Received ELMo embeddings:', elmo_representations)
     finally:
