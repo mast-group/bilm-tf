@@ -47,7 +47,7 @@ def main(args):
     
      'lstm': {
       'cell_clip': 3,
-      'dim': args.dim,
+      'dim': args.state_dim,
       'n_layers': 2,
       'proj_clip': 3,
       'projection_dim': 512,
@@ -82,7 +82,8 @@ if __name__ == '__main__':
     parser.add_argument('--train_prefix', help='Prefix for train files')
     parser.add_argument('--valid_prefix', help='Prefix for validation files')
     parser.add_argument('--batch_size', help='Batch size for training', type=int, default=128)
-    parser.add_argument('--dim', help='Dimensions for embeddings', type=int, default=4096)
+    parser.add_argument('--state_dim', help='Dimensions for LSTM state', type=int, default=4096)
+    parser.add_argument('--emb_dim', help='Dimensions for embeddings', type=int, default=512)
     parser.add_argument('--unroll_steps', help='Unroll steps for bilstm', type=int, default=200)
     parser.add_argument('--dropout', help='Dropout propability', type=float, default=0.1)
 
