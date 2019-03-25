@@ -83,7 +83,7 @@ if __name__ == '__main__':
     parser.add_argument('--valid_prefix', help='Prefix for validation files')
     parser.add_argument('--batch_size', help='Batch size for training', type=int, default=128)
     parser.add_argument('--dim', help='Dimensions for embeddings', type=int, default=4096)
-    parser.add_argument('--steps', help='Unroll steps for bilstm', type=int, default=200)
+    parser.add_argument('--unroll_steps', help='Unroll steps for bilstm', type=int, default=200)
     parser.add_argument('--dropout', help='Dropout propability', type=float, default=0.1)
 
     args = parser.parse_args()
