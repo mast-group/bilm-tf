@@ -33,7 +33,7 @@ code_embeddings_op = bilm(code_character_ids)
 # and code at each of the input and output.
 # We use the same ELMo weights for both the question and code
 # at each of the input and output.
-elmo_code_input = weight_layers('input', code_embeddings_op, l2_coef=0.0)
+elmo_code_rep_op = weight_layers('input', code_embeddings_op, l2_coef=0.0)
 # with tf.variable_scope('', reuse=True):
 #     # the reuse=True scope reuses weights from the code for the question
 #     elmo_question_input = weight_layers(
@@ -65,17 +65,17 @@ with tf.Session() as sess:
 
     # Warm up the LSTM state, otherwise will get inconsistent embeddings.
     for step in range(100):
-        elmo_code_input_ = sess.run(
-            [elmo_code_input['weighted_op']],
+        elmo_code_representation = sess.run(
+            [elmo_code_rep_op['weighted_op']],
             feed_dict={code_character_ids: code_ids}
         )
 
     # Compute ELMo representations (here for the input only, for simplicity).
-    elmo_code_input_ = sess.run(
-        [elmo_code_input['weighted_op']],
+    elmo_code_representation = sess.run(
+        [elmo_code_rep_op['weighted_op']],
         feed_dict={code_character_ids: code_ids}
     )
-    print(elmo_code_input_)
+    print(elmo_code_representation)
     # elmo_question_input_ = sess.run(
     #     [elmo_question_input['weighted_op']],
     #     feed_dict={question_character_ids: question_ids}
