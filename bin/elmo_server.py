@@ -100,7 +100,7 @@ if __name__ == '__main__':
 
                 # Receive code sequences in small chunks, calculate ELMo representations and send response.
                 while True:
-                    received_data = ''
+                    received_data = ''.encode()
                     data = connection.recv(MAX_PACKET_SIZE)
                     while not data or not data[-len(END): ] == END:
                         # eprint('received "%s"' % data.decode())
