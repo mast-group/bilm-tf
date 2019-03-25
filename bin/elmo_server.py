@@ -20,7 +20,7 @@ MAX_PACKET_SIZE = 1000000
 # Port to listen in
 PORT = 8888
 # Finished packet
-END = '<END>'
+END = '<END>'.encode()
 
 
 def eprint(*args, **kwargs):
@@ -102,8 +102,8 @@ if __name__ == '__main__':
                 while True:
                     received_data = ''
                     data = connection.recv(MAX_PACKET_SIZE)
-                    while not data or not data.endswith(END):
-                        eprint('received "%s"' % data)
+                    while not data or not data.decode().endswith(END.decode()):
+                        eprint('received "%s"' % data.decode())
                         received_data += data
                         data = connection.recv(MAX_PACKET_SIZE)
                     received_data += data[:-len(END)]

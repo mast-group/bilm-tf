@@ -46,9 +46,9 @@ def query(code):
         amount_received = 0
         amount_expected = len(data)
         
-        received_data = ''
+        received_data = ''.encode()
         received = sock.recv(MAX_PACKET_SIZE)
-        while not received.endswith(END):
+        while not received.decode().endswith(END.decode()):
             received_data += received
             received = sock.recv(MAX_PACKET_SIZE)
         received_data += received[:-len(END)]
