@@ -118,24 +118,28 @@ if __name__ == '__main__':
                     if data[-len(END): ] == END:
                         data = data[: -len(END)]
                     received_data += data
-                    eprint('received "%s"' % received_data)
-                    eprint('Quering elmo!')
 
-                    # Create batches of data.
-                    tokenized_code = pickle.loads(received_data)
-                    code_ids = batcher.batch_sentences(tokenized_code)
+                    # There is data so query ELMo
+                    if len(received_data > 0):
+                        eprint('received "%s"' % received_data)
+                        eprint('Quering elmo!')
+
+                        # Create batches of data.
+                        tokenized_code = pickle.loads(received_data)
+                        code_ids = batcher.batch_sentences(tokenized_code)
+                        
+                        # Compute ELMo representations (here for the input only, for simplicity).
+                        elmo_code_representation = sess.run(
+                            [elmo_code_rep_op['weighted_op']],
+                            feed_dict={code_character_ids: code_ids}
+                        )
+                        print('Representations:', elmo_code_representation)
+                        
+                        # Send response (ELMo representations) back to the client
+                        eprint('Sending ELMo representations back to the client.')
+                        connection.sendall(pickle.dumps(elmo_code_representation))
+                        connection.sendall(END)
                     
-                    # Compute ELMo representations (here for the input only, for simplicity).
-                    elmo_code_representation = sess.run(
-                        [elmo_code_rep_op['weighted_op']],
-                        feed_dict={code_character_ids: code_ids}
-                    )
-                    print('Representations:', elmo_code_representation)
-                    
-                    # Send response (ELMo representations) back to the client
-                    eprint('Sending ELMo representations back to the client.')
-                    connection.sendall(pickle.dumps(elmo_code_representation))
-                    connection.sendall(END)
                     if close_connection:
                         connection.sendall(CONN_END)
             finally:
