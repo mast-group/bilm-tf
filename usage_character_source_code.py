@@ -64,7 +64,7 @@ with tf.Session() as sess:
     # question_ids = batcher.batch_sentences(tokenized_question)
 
     # Warm up the LSTM state, otherwise will get inconsistent embeddings.
-    for step in range(100):
+    for step in range(500):
         elmo_code_representation = sess.run(
             [elmo_code_rep_op['weighted_op']],
             feed_dict={code_character_ids: code_ids}

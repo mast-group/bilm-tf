@@ -73,7 +73,7 @@ if __name__ == '__main__':
         tokenized_code = [sentence.split() for sentence in raw_code]
         # Create batches of data for warm up.
         code_ids = batcher.batch_sentences(tokenized_code)
-        for step in range(100):
+        for step in range(500):
             elmo_code_representation = sess.run(
                 [elmo_code_rep_op['weighted_op']],
                 feed_dict={code_character_ids: code_ids}
