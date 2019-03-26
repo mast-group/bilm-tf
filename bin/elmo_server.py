@@ -125,17 +125,16 @@ if __name__ == '__main__':
                     if data[-len(END): ] == END:
                         data = data[: -len(END)]
                     received_data += data
-                    json_query = json.loads(received_data)
+                    json_query = json.loads(pickle.loads(received_data))
                     
                     # There is data so query ELMo
                     if len(received_data) > 0:
                         eprint('received "%s"' % received_data)
                         options = json_query['options']
-                        sequences = json_query['sequences']
+                        tokenized_code = json_query['sequences']
                         eprint('Quering elmo!')
 
                         # Create batches of data.
-                        tokenized_code = pickle.loads(received_data)
                         code_ids = batcher.batch_sentences(tokenized_code)
                         
                         # Compute ELMo representations (here for the input only, for simplicity).
