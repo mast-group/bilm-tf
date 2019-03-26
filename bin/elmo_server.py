@@ -21,6 +21,7 @@ MAX_PACKET_SIZE = 1000000
 PORT = 8888
 # Finished packet
 END = '<END>'.encode()
+CONN_END = '<CONN_END>'.encode()
 
 
 def eprint(*args, **kwargs):
@@ -97,17 +98,27 @@ if __name__ == '__main__':
 
             try:
                 eprint('Received connection from:', client_address)
-
-                # Receive code sequences in small chunks, calculate ELMo representations and send response.
-                while True:
+                # Receive code sequences in small chunks, calculate ELMo representations 
+                # and send response until the client asks to close the connection.
+                close_connection = False
+                while not close_connection:
                     received_data = ''.encode()
+
                     data = connection.recv(MAX_PACKET_SIZE)
-                    while not data or not data[-len(END): ] == END:
+                    # Keep receiving until you receive the end of a query or client finish request.
+                    while not data or not data[-len(END): ] == END or \
+                        not data[-len(CONN_END): ] == CONN_END:
                         # eprint('received "%s"' % data.decode())
                         received_data += data
                         data = connection.recv(MAX_PACKET_SIZE)
-                    received_data += data[: -len(END)]
-                    eprint('received "%s"' % received_data)
+                    
+                    if data[-len(CONN_END): ] == CONN_END:
+                        data = data[: -len(CONN_END)]
+                        close_connection = True
+                    if data[-len(END): ] == END:
+                        data = data[: -len(END)]
+                    received_data += data
+                    # eprint('received "%s"' % received_data)
                     eprint('Quering elmo!')
 
                     # Create batches of data.
@@ -120,11 +131,13 @@ if __name__ == '__main__':
                         feed_dict={code_character_ids: code_ids}
                     )
                     print('Representations:', elmo_code_representation)
-                    eprint('Sending ELMo representations back to the client.')
                     
+                    # Send response (ELMo representations) back to the client
+                    eprint('Sending ELMo representations back to the client.')
                     connection.sendall(pickle.dumps(elmo_code_representation))
                     connection.sendall(END)
-                    break                
+                    if close_connection:
+                        connection.sendall(CONN_END)
             finally:
                 # Clean up the connection
                 connection.close()
