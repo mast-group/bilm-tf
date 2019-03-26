@@ -83,7 +83,10 @@ if __name__ == '__main__':
             query(code, socket)
             
             options[token_embeddings_only] = True
+            print(options)
             query(code, socket, options)
+            query(code, socket, options)
+            
             # No more data, ask to close the connection
             socket.sendall(CONN_END)
         finally:
