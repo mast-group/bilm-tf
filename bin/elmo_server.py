@@ -7,6 +7,8 @@ from __future__ import print_function
 
 import tensorflow as tf
 from bilm import Batcher, BidirectionalLanguageModel, weight_layers
+
+import json
 import os
 import pickle
 import socket
@@ -55,7 +57,8 @@ if __name__ == '__main__':
     # and code at each of the input and output.
     # We use the same ELMo weights for both the question and code
     # at each of the input and output.
-    elmo_code_rep_op = weight_layers('input', code_embeddings_op, l2_coef=0.0)
+    elmo_rep_op = weight_layers('input', code_embeddings_op, l2_coef=0.0)
+    elmo_top_rep_op = weight_layers('input', code_embeddings_op, l2_coef=0.0, use_top_only=True)
 
     # Create a Tensorflow session
     with tf.Session() as sess:
@@ -75,7 +78,7 @@ if __name__ == '__main__':
         code_ids = batcher.batch_sentences(tokenized_code)
         for step in range(500):
             elmo_code_representation = sess.run(
-                [elmo_code_rep_op['weighted_op']],
+                [elmo_rep_op['weighted_op']],
                 feed_dict={code_character_ids: code_ids}
             )
         print('ELMo was warmed up.')
@@ -118,10 +121,13 @@ if __name__ == '__main__':
                     if data[-len(END): ] == END:
                         data = data[: -len(END)]
                     received_data += data
-
+                    json_query = json.loads(received_data)
+                    
                     # There is data so query ELMo
                     if len(received_data) > 0:
                         eprint('received "%s"' % received_data)
+                        options = json_query['options']
+                        sequences = json_query['sequences']
                         eprint('Quering elmo!')
 
                         # Create batches of data.
@@ -129,10 +135,16 @@ if __name__ == '__main__':
                         code_ids = batcher.batch_sentences(tokenized_code)
                         
                         # Compute ELMo representations (here for the input only, for simplicity).
-                        elmo_code_representation = sess.run(
-                            [elmo_code_rep_op['weighted_op']],
-                            feed_dict={code_character_ids: code_ids}
-                        )
+                        if options['top_layer_only']:
+                            elmo_code_representation = sess.run(
+                                [elmo_top_rep_op['weighted_op']],
+                                feed_dict={code_character_ids: code_ids}
+                            )
+                        else:
+                            elmo_code_representation = sess.run(
+                                [elmo_rep_op['weighted_op']],
+                                feed_dict={code_character_ids: code_ids}
+                            )
                         print('Representations:', elmo_code_representation)
                         
                         # Send response (ELMo representations) back to the client

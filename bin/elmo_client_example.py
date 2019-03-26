@@ -3,6 +3,7 @@ ELMo client example that makes code embedding queries.
 
 '''
 
+import json
 import pickle
 import socket
 import sys
@@ -26,7 +27,7 @@ def connect(server, port):
     return sock
 
 
-def query(code, socket):
+def query(code, socket, options={'top_layer_only' : False, 'token_embeddings_only' : False}):
     """Performs...
     
     Arguments:
@@ -43,11 +44,12 @@ def query(code, socket):
         code_sequences = [code_sequence.split() for code_sequence in code]
     elif isinstance(code, basestring):
         code_sequences = [code.split()]
-    else: raise ValueError  
-   
+    else: raise ValueError
+    
     eprint('Sending code sequence "%s"' % code_sequences)
-    data = pickle.dumps(code_sequences)
-    eprint("Pickled code sequences: ", data)
+    query = json.dumps({'sequences': code_sequences, 'options': options})
+    data = pickle.dumps(query)
+    # eprint("Pickled code sequences: ", data)
     socket.sendall(data)
     socket.sendall(END)
     
@@ -64,17 +66,24 @@ def query(code, socket):
 
 if __name__ == '__main__':
     SERVER = 'localhost'
+    top_layer_only = True
+    token_embeddings_only = False
+    options = {'top_layer_only' : top_layer_only, 'token_embeddings_only' : token_embeddings_only}
+
     try:
         socket = connect('localhost', PORT)
 
         try:
             code = 'STD:var ID:gfm STD:= ID:require STD:( LIT:github-flavored-markdown STD:) STD:;' 
-            query(code, socket)
+            query(code, socket, options)
             
             code = ['STD:var ID:gfm STD:= ID:require STD:( LIT:github-flavored-markdown STD:) STD:;',
                 'STD:var ID:gfm STD:= ID:require STD:( LIT:github-flavored-markdown STD:) STD:;'
             ]
             query(code, socket)
+            
+            options[token_embeddings_only] = True
+            query(code, socket, options)
             # No more data, ask to close the connection
             socket.sendall(CONN_END)
         finally:
