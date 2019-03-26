@@ -108,7 +108,7 @@ if __name__ == '__main__':
                     # Keep receiving until you receive the end of a query or client finish request.
                     while not data or not data[-len(END): ] == END or \
                         not data[-len(CONN_END): ] == CONN_END:
-                        # eprint('received "%s"' % data.decode())
+                        eprint('received "%s"' % data.decode())
                         received_data += data
                         data = connection.recv(MAX_PACKET_SIZE)
                     
@@ -118,7 +118,7 @@ if __name__ == '__main__':
                     if data[-len(END): ] == END:
                         data = data[: -len(END)]
                     received_data += data
-                    # eprint('received "%s"' % received_data)
+                    eprint('received "%s"' % received_data)
                     eprint('Quering elmo!')
 
                     # Create batches of data.
