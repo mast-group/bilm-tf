@@ -57,8 +57,9 @@ if __name__ == '__main__':
     # and code at each of the input and output.
     # We use the same ELMo weights for both the question and code
     # at each of the input and output.
-    elmo_rep_op = weight_layers('input', code_embeddings_op, l2_coef=0.0)
-    elmo_top_rep_op = weight_layers('input', code_embeddings_op, l2_coef=0.0, use_top_only=True)
+    elmo_rep_op = weight_layers('input', code_embeddings_op, l2_coef=0.0, name='ELMo')
+    elmo_top_rep_op = weight_layers(
+        'input', code_embeddings_op, l2_coef=0.0, use_top_only=True, name='top')
 
     # Create a Tensorflow session
     with tf.Session() as sess:
