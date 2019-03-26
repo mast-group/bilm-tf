@@ -125,10 +125,10 @@ if __name__ == '__main__':
                     if data[-len(END): ] == END:
                         data = data[: -len(END)]
                     received_data += data
-                    json_query = json.loads(pickle.loads(received_data))
                     
                     # There is data so query ELMo
                     if len(received_data) > 0:
+                        json_query = json.loads(pickle.loads(received_data))
                         eprint('received "%s"' % received_data)
                         options = json_query['options']
                         tokenized_code = json_query['sequences']
