@@ -16,7 +16,7 @@ def connect(server, port):
         server {[type]} -- [description]
         port {[type]} -- [description]
     """
-     # Create a TCP/IP socket
+    # Create a TCP/IP socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     # Connect the socket to the port where the server is listening
