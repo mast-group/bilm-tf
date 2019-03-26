@@ -120,7 +120,7 @@ if __name__ == '__main__':
                     received_data += data
 
                     # There is data so query ELMo
-                    if len(received_data > 0):
+                    if len(received_data) > 0:
                         eprint('received "%s"' % received_data)
                         eprint('Quering elmo!')
 
