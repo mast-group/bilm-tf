@@ -1,7 +1,7 @@
 
 import tensorflow as tf
 
-def weight_layers(name, bilm_ops, l2_coef=None,
+def weight_layers(name, bilm_ops, l2_coef=None, use_tokens_only = False,
                   use_top_only=False, do_layer_norm=False):
     '''
     Weight the layers of a biLM with trainable scalar weights to
@@ -57,8 +57,13 @@ def weight_layers(name, bilm_ops, l2_coef=None,
             return tf.nn.batch_normalization(
                 x, mean, variance, None, None, 1E-12
             )
-
-        if use_top_only:
+        if use_tokens_only:
+            layers = tf.split(lm_embeddings, n_lm_layers, axis=1)
+            # just the token embeddings layer
+            sum_pieces = tf.squeeze(layers[0], squeeze_dims=1)
+            # no regularization
+            reg = 0.0
+        elif use_top_only:
             layers = tf.split(lm_embeddings, n_lm_layers, axis=1)
             # just the top layer
             sum_pieces = tf.squeeze(layers[-1], squeeze_dims=1)
@@ -108,7 +113,7 @@ def weight_layers(name, bilm_ops, l2_coef=None,
         )
         weighted_lm_layers = sum_pieces * gamma
 
-        ret = {'weighted_op': weighted_lm_layers, 'regularization_op': reg}
+        ret = {'weighted_op': weighted_lm_layers, 'regularization_op': reg, 'embeddings_op': lm_embeddings}
 
     return ret
 
