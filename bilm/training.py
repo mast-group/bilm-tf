@@ -672,13 +672,14 @@ def _get_feed_dict_from_X(X, start, end, model, char_inputs, bidirectional):
     return feed_dict
 
 
-def train(options, data, n_gpus, tf_save_dir, tf_log_dir,
+def train(options, data, n_gpus, tf_save_dir, tf_log_dir, valid_data=None,
           restart_ckpt_file=None):
 
     # not restarting so save the options
     if restart_ckpt_file is None:
         with open(os.path.join(tf_save_dir, 'options.json'), 'w') as fout:
             fout.write(json.dumps(options))
+    else: print('Using restart_ckpt_file:', restart_ckpt_file)
 
     with tf.device('/cpu:0'):
         global_step = tf.get_variable(
@@ -766,10 +767,12 @@ def train(options, data, n_gpus, tf_save_dir, tf_log_dir,
             allow_soft_placement=True)) as sess:
         sess.run(init)
 
+        checkpoint_batch_no = 1
         # load the checkpoint data if needed
         if restart_ckpt_file is not None:
             loader = tf.train.Saver()
             loader.restore(sess, restart_ckpt_file)
+            chechpoint_batch_no = int(restart_ckpt_file.split('-')[-1])
             
         summary_writer = tf.summary.FileWriter(tf_log_dir, sess.graph)
 
@@ -788,8 +791,15 @@ def train(options, data, n_gpus, tf_save_dir, tf_log_dir,
         n_tokens_per_batch = batch_size * unroll_steps * n_gpus
         n_batches_per_epoch = int(n_train_tokens / n_tokens_per_batch)
         n_batches_total = options['n_epochs'] * n_batches_per_epoch
-        print("Training for %s epochs and %s batches" % (
-            options['n_epochs'], n_batches_total))
+        if restart_ckpt_file is None:
+            print("Training for %s epochs and %s batches" % (
+                options['n_epochs'], n_batches_total))
+            print("Train batches per epoch: %d " % n_batches_per_epoch)
+        else:
+            remaining_epochs = options['n_epochs'] - (checkpoint_batch_no / n_batches_per_epoch)
+            print("Training for the remaining %s epochs and %s batches" % (
+                options['n_epochs'], n_batches_total - checkpoint_batch_no))
+            print("Train batches per epoch: %d" % n_batches_per_epoch)
 
         # get the initial lstm states
         init_state_tensors = []
@@ -833,9 +843,14 @@ def train(options, data, n_gpus, tf_save_dir, tf_log_dir,
 
         init_state_values = sess.run(init_state_tensors, feed_dict=feed_dict)
 
+        # save the initial model
+        checkpoint_path = os.path.join(tf_save_dir, 'model.ckpt')
+        saver.save(sess, checkpoint_path, global_step=global_step)
+
         t1 = time.time()
         data_gen = data.iter_batches(batch_size * n_gpus, unroll_steps)
-        for batch_no, batch in enumerate(data_gen, start=1):
+        best_valid_ppl = sys.maxsize
+        for batch_no, batch in enumerate(data_gen, start=checkpoint_batch_no):
 
             # slice the input in the batch for the feed_dict
             X = batch
@@ -886,10 +901,24 @@ def train(options, data, n_gpus, tf_save_dir, tf_log_dir,
                 print("Batch %s, train_perplexity=%s" % (batch_no, ret[2]))
                 print("Total time: %s" % (time.time() - t1))
 
-            if (batch_no % 1250 == 0) or (batch_no == n_batches_total):
+            # Checkpointing
+            if (batch_no % 1250 == 0):
+                # checkpoint the model every 1250 batches
+                checkpoint_path = os.path.join(tf_save_dir, 'model.ckpt')
+                saver.save(sess, checkpoint_path, global_step=global_step)
+            
+            if (batch_no % n_batches_per_epoch == 0) or (batch_no == n_batches_total):
                 # save the model
                 checkpoint_path = os.path.join(tf_save_dir, 'model.ckpt')
                 saver.save(sess, checkpoint_path, global_step=global_step)
+                if valid_data:
+                    valid_ppl = test(options, tf.train.latest_checkpoint(tf_save_dir), valid_data,
+                                     batch_size=batch_size, model=model)
+                    if valid_ppl > best_valid_ppl:
+                        print('Stopping training early since validation ppl got worse.')
+                        break
+                    else:
+                        best_valid_ppl = valid_ppl
 
             if batch_no == n_batches_total:
                 # done training!
