@@ -14,7 +14,7 @@ def main(args):
     # define the options
     batch_size = args.batch_size  # batch size for each GPU
     unroll_steps = args.unroll_steps
-    n_gpus = 2
+    n_gpus = args.gpus
 
     # number of tokens in training data (this for 1B Word Benchmark)
     # n_train_tokens = 768648884
@@ -86,6 +86,7 @@ if __name__ == '__main__':
     parser.add_argument('--emb_dim', help='Dimensions for embeddings', type=int, default=512)
     parser.add_argument('--unroll_steps', help='Unroll steps for bilstm', type=int, default=200)
     parser.add_argument('--dropout', help='Dropout propability', type=float, default=0.1)
+    parser.add_argument('--gpus', help='Number of GPUs to use for training', type=int, default=2)
 
     args = parser.parse_args()
     main(args)
