@@ -248,7 +248,7 @@ class LanguageModel(object):
         # set up weights for projection
         if use_proj:
             assert n_filters > projection_dim
-            with tf.variable_scope('CNN_proj') as scope:
+            with tf.variable_scope('CNN_proj', reuse=tf.AUTO_REUSE) as scope:
                     W_proj_cnn = tf.get_variable(
                         "W_proj", [n_filters, projection_dim],
                         initializer=tf.random_normal_initializer(
