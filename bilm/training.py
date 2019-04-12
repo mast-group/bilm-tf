@@ -468,7 +468,7 @@ class LanguageModel(object):
             # softmax_W is just the embedding layer
             self.softmax_W = self.embedding_weights
 
-        with tf.variable_scope('softmax'), tf.device('/cpu:0'):
+        with tf.variable_scope('softmax', reuse=tf.AUTO_REUSE), tf.device('/cpu:0'):
             # Glorit init (std=(1.0 / sqrt(fan_in))
             softmax_init = tf.random_normal_initializer(0.0,
                 1.0 / np.sqrt(softmax_dim))
