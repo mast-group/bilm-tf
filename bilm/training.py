@@ -405,7 +405,7 @@ class LanguageModel(object):
                 # NOTE: this variable scope is for backward compatibility
                 # with existing models...
                 if self.bidirectional:
-                    with tf.variable_scope('RNN_%s' % lstm_num):
+                    with tf.variable_scope('RNN_%s' % lstm_num, reuse=tf.AUTO_REUSE):
                         _lstm_output_unpacked, final_state = tf.nn.static_rnn(
                             lstm_cell,
                             tf.unstack(lstm_input, axis=1),
