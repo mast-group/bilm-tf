@@ -156,22 +156,22 @@ class LanguageModel(object):
                                    name='tokens_characters')
         # the character embeddings
         with tf.device("/cpu:0"):
-            self.embedding_weights = tf.get_variable(
-                    "char_embed", [n_chars, char_embed_dim],
-                    dtype=DTYPE,
-                    initializer=tf.random_uniform_initializer(-1.0, 1.0),
-                    reuse=tf.AUTO_REUSE
-            )
-            # shape (batch_size, unroll_steps, max_chars, embed_dim)
-            self.char_embedding = tf.nn.embedding_lookup(self.embedding_weights,
-                                                    self.tokens_characters)
+            with tf.variable_scope("embeddings", reuse=tf.AUTO_REUSE):
+                self.embedding_weights = tf.get_variable(
+                        "char_embed", [n_chars, char_embed_dim],
+                        dtype=DTYPE,
+                        initializer=tf.random_uniform_initializer(-1.0, 1.0)
+                )
+                # shape (batch_size, unroll_steps, max_chars, embed_dim)
+                self.char_embedding = tf.nn.embedding_lookup(self.embedding_weights,
+                                                        self.tokens_characters)
 
-            if self.bidirectional:
-                self.tokens_characters_reverse = tf.placeholder(DTYPE_INT,
-                                   shape=(batch_size, unroll_steps, max_chars),
-                                   name='tokens_characters_reverse')
-                self.char_embedding_reverse = tf.nn.embedding_lookup(
-                    self.embedding_weights, self.tokens_characters_reverse)
+                if self.bidirectional:
+                    self.tokens_characters_reverse = tf.placeholder(DTYPE_INT,
+                                    shape=(batch_size, unroll_steps, max_chars),
+                                    name='tokens_characters_reverse')
+                    self.char_embedding_reverse = tf.nn.embedding_lookup(
+                        self.embedding_weights, self.tokens_characters_reverse)
 
 
         # the convolutions
