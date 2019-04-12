@@ -914,7 +914,7 @@ def train(options, data, n_gpus, tf_save_dir, tf_log_dir, valid_data=None,
                 saver.save(sess, checkpoint_path, global_step=global_step)
                 if valid_data:
                     valid_ppl = test(options, tf.train.latest_checkpoint(tf_save_dir), valid_data,
-                                     batch_size=batch_size, model=model)
+                                     batch_size=batch_size)
                     if valid_ppl > best_valid_ppl:
                         print('Stopping training early since validation ppl got worse.')
                         break
