@@ -851,6 +851,10 @@ def train(options, data, n_gpus, tf_save_dir, tf_log_dir, valid_data=None,
         t1 = time.time()
         data_gen = data.iter_batches(batch_size * n_gpus, unroll_steps)
         best_valid_ppl = sys.maxsize
+        print("Validating the initial model")
+        valid_ppl = test(options, tf.train.latest_checkpoint(tf_save_dir), valid_data,
+                                    batch_size=batch_size)
+        best_valid_ppl = valid_ppl
         for batch_no, batch in enumerate(data_gen, start=checkpoint_batch_no):
 
             # slice the input in the batch for the feed_dict
