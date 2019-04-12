@@ -223,8 +223,10 @@ class LanguageModel(object):
             return tf.concat(convolutions, 2)
 
         # for first model, this is False, for others it's True
-        reuse = tf.get_variable_scope().reuse
-        embedding = make_convolutions(self.char_embedding, reuse)
+        # reuse = tf.get_variable_scope().reuse
+        reuse = tf.AUTO_REUSE
+        # embedding = make_convolutions(self.char_embedding, reuse
+        make_convolutions(self.char_embedding, )
 
         self.token_embedding_layers = [embedding]
 
