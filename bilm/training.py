@@ -269,7 +269,7 @@ class LanguageModel(object):
             highway_dim = n_filters
 
             for i in range(n_highway):
-                with tf.variable_scope('CNN_high_%s' % i) as scope:
+                with tf.variable_scope('CNN_high_%s' % i, reuse=tf.AUTO_REUSE) as scope:
                     W_carry = tf.get_variable(
                         'W_carry', [highway_dim, highway_dim],
                         # glorit init
