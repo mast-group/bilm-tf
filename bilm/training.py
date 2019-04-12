@@ -159,7 +159,8 @@ class LanguageModel(object):
             self.embedding_weights = tf.get_variable(
                     "char_embed", [n_chars, char_embed_dim],
                     dtype=DTYPE,
-                    initializer=tf.random_uniform_initializer(-1.0, 1.0)
+                    initializer=tf.random_uniform_initializer(-1.0, 1.0),
+                    reuse=tf.AUTO_REUSE
             )
             # shape (batch_size, unroll_steps, max_chars, embed_dim)
             self.char_embedding = tf.nn.embedding_lookup(self.embedding_weights,
