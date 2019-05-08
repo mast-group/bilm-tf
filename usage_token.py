@@ -95,6 +95,7 @@ with tf.Session() as sess:
     # Create batches of data.
     context_ids = batcher.batch_sentences(tokenized_context)
     question_ids = batcher.batch_sentences(tokenized_question)
+    print(context_ids)
 
     # Compute ELMo representations (here for the input only, for simplicity).
     elmo_context_input_, elmo_question_input_ = sess.run(
