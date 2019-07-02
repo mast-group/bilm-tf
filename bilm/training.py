@@ -85,7 +85,7 @@ class LanguageModel(object):
                                shape=(batch_size, unroll_steps),
                                name='token_ids')
         # the word embeddings
-        with tf.device("/cpu:0"):
+        with tf.variable_scope('embedding', reuse=tf.AUTO_REUSE), tf.device("/cpu:0"):
             self.embedding_weights = tf.get_variable(
                 "embedding", [n_tokens_vocab, projection_dim],
                 dtype=DTYPE,
