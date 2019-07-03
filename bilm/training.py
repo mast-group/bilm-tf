@@ -918,7 +918,7 @@ def train(options, data, n_gpus, tf_save_dir, tf_log_dir, valid_data=None,
             #     valid_ppl = test(options, tf.train.latest_checkpoint(tf_save_dir), valid_data,
             #                          batch_size=batch_size)
 
-            if (batch_no % n_batches_per_epoch == 0) or (batch_no == n_batches_total):
+            if (batch_no % n_batches_per_epoch == 0 and batch_no > 0) or (batch_no == n_batches_total):
                 # save the model
                 checkpoint_path = os.path.join(tf_save_dir, 'model.ckpt')
                 saver.save(sess, checkpoint_path, global_step=global_step)
