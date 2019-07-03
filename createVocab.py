@@ -7,6 +7,8 @@ from operator import itemgetter
 parser = argparse.ArgumentParser(description='Process command line arguments.')
 parser.add_argument("-r", "--read", dest="filename", help="path to the file from which to extract the vocab", metavar="TR_FILE")
 parser.add_argument("-v", "--vocab", dest="vocabulary", help="path to the file in which to save the vocab", metavar="VOC_FILE")
+parser.add_argument("-t", "--thresh", type=int, dest="threshold", help="vocabulary cut-off threshold", metavar="VOC_THRESH")
+
 args = parser.parse_args()
 
 files = glob.glob(args.filename)
@@ -26,6 +28,6 @@ with open(args.vocabulary, 'w') as f:
 	f.write( '</S>' + '\n' )
 	f.write( '<UNK>' + '\n' )
 	for k, v in sorted_counts:
-		if v >= 5: f.write( k + '\n')
+		if v >= args.threshold: f.write( k + '\n')
 		
 #print(counts)
