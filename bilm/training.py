@@ -852,11 +852,11 @@ def train(options, data, n_gpus, tf_save_dir, tf_log_dir, valid_data=None,
         t1 = time.time()
         data_gen = data.iter_batches(batch_size * n_gpus, unroll_steps)
         best_valid_ppl = sys.maxsize
-        if valid_data != None:
-            print("Validating the initial model")
-            valid_ppl = test(options, tf.train.latest_checkpoint(tf_save_dir), valid_data,
-                                    batch_size=batch_size)
-            best_valid_ppl = valid_ppl
+        # if valid_data:
+        #     print("Validating the initial model")
+        #     valid_ppl = test(options, tf.train.latest_checkpoint(tf_save_dir), valid_data,
+        #                             batch_size=batch_size)
+        #     best_valid_ppl = valid_ppl
         
         for batch_no, batch in enumerate(data_gen, start=checkpoint_batch_no):
 
@@ -914,9 +914,9 @@ def train(options, data, n_gpus, tf_save_dir, tf_log_dir, valid_data=None,
                 # checkpoint the model every 1250 batches
                 checkpoint_path = os.path.join(tf_save_dir, 'model.ckpt')
                 saver.save(sess, checkpoint_path, global_step=global_step)
-            if batch_no == 400:
-                valid_ppl = test(options, tf.train.latest_checkpoint(tf_save_dir), valid_data,
-                                     batch_size=batch_size)
+            # if batch_no == 400:
+            #     valid_ppl = test(options, tf.train.latest_checkpoint(tf_save_dir), valid_data,
+            #                          batch_size=batch_size)
 
             if (batch_no % n_batches_per_epoch == 0) or (batch_no == n_batches_total):
                 # save the model
