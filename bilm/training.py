@@ -923,16 +923,18 @@ def train(options, data, n_gpus, tf_save_dir, tf_log_dir, valid_data=None,
                 # save the model
                 checkpoint_path = os.path.join(tf_save_dir, 'model.ckpt')
                 saver.save(sess, checkpoint_path, global_step=global_step)
-                if valid_data:
-                    valid_ppl = test(options, tf.train.latest_checkpoint(tf_save_dir), valid_data,
-                                     batch_size=batch_size)
-                    if valid_ppl > best_valid_ppl:
-                        print('Stopping training early since validation ppl got worse.')
-                        break
-                    else:
-                        best_valid_ppl = valid_ppl
+                print('Finished an epoch.')
+                # if valid_data:
+                #     valid_ppl = test(options, tf.train.latest_checkpoint(tf_save_dir), valid_data,
+                #                      batch_size=batch_size)
+                #     if valid_ppl > best_valid_ppl:
+                #         print('Stopping training early since validation ppl got worse.')
+                #         break
+                #     else:
+                #         best_valid_ppl = valid_ppl
 
             if batch_no == n_batches_total:
+                print('Trained on all batches')
                 # done training!
                 break
 
