@@ -67,8 +67,8 @@ def main(args):
     valid_prefix = args.valid_prefix
     data = BidirectionalLMDataset(prefix, vocab, test=False, shuffle_on_load=True)
     print('Will load validation')
-    validation_data = BidirectionalLMDataset(valid_prefix, vocab, test=True, shuffle_on_load=False)
-    print('Loaded validation')
+    # validation_data = BidirectionalLMDataset(valid_prefix, vocab, test=True, shuffle_on_load=False)
+    # print('Loaded validation')
 
     tf_save_dir = args.save_dir
     tf_log_dir = args.save_dir
