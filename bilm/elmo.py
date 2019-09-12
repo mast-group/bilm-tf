@@ -2,7 +2,7 @@
 import tensorflow as tf
 
 def weight_layers(name, bilm_ops, l2_coef=None, use_tokens_only = False,
-                  use_top_only=False, do_layer_norm=False):
+                  use_top_only=False, do_layer_norm=False, is_trainable=True):
     '''
     Weight the layers of a biLM with trainable scalar weights to
     compute ELMo representations.
@@ -75,7 +75,7 @@ def weight_layers(name, bilm_ops, l2_coef=None, use_tokens_only = False,
                 shape=(n_lm_layers, ),
                 initializer=tf.zeros_initializer,
                 regularizer=_l2_regularizer,
-                trainable=True,
+                trainable=is_trainable,
             )
 
             # normalize the weights
@@ -109,7 +109,7 @@ def weight_layers(name, bilm_ops, l2_coef=None, use_tokens_only = False,
             shape=(1, ),
             initializer=tf.ones_initializer,
             regularizer=None,
-            trainable=True,
+            trainable=is_trainable,
         )
         weighted_lm_layers = sum_pieces * gamma
 
