@@ -60,7 +60,7 @@ def main(args):
      'batch_size': batch_size,
      'n_tokens_vocab': vocab.size,
      'unroll_steps': unroll_steps,
-     'n_negative_samples_batch': 8192,
+     'n_negative_samples_batch': args.neg_samples,
     }
 
     prefix = args.train_prefix
@@ -87,6 +87,7 @@ if __name__ == '__main__':
     parser.add_argument('--unroll_steps', help='Unroll steps for bilstm', type=int, default=200)
     parser.add_argument('--dropout', help='Dropout propability', type=float, default=0.1)
     parser.add_argument('--gpus', help='Number of GPUs to use for training', type=int, default=2)
+    parser.add_argument('--neg_samples', help='Dimensions for embeddings', type=int, default=8192)
 
     args = parser.parse_args()
     main(args)
