@@ -282,7 +282,7 @@ def _get_batch(generator, batch_size, num_steps, max_word_length):
                 if cur_stream[i] is None or len(cur_stream[i][0]) <= 1:
                     try:
                         cur_stream[i] = list(next(generator))
-                    except StopIteration:
+                    except Exception:
                         # No more data, exhaust current streams and quit
                         no_more_data = True
                         break
@@ -355,7 +355,7 @@ class LMDataset(object):
                 # we've loaded all the data
                 # this will propogate up to the generator in get_batch
                 # and stop iterating
-                raise StopIteration
+                return
             else:
                 shard_name = self._all_shards.pop()
         else:
