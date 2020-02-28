@@ -84,7 +84,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', help='Batch size for training', type=int, default=128)
     parser.add_argument('--state_dim', help='Dimensions for LSTM state', type=int, default=4096)
     parser.add_argument('--emb_dim', help='Dimensions for embeddings', type=int, default=512)
-    parser.add_argument('--unroll_steps', help='Unroll steps for bilstm', type=int, default=200)
+    parser.add_argument('--unroll_steps', help='Unroll steps for bilstm', type=int, default=20)
     parser.add_argument('--dropout', help='Dropout propability', type=float, default=0.1)
     parser.add_argument('--gpus', help='Number of GPUs to use for training', type=int, default=2)
     parser.add_argument('--neg_samples', help='Dimensions for embeddings', type=int, default=8192)
